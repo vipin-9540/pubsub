@@ -5,7 +5,7 @@ const { createClient } = require('redis');
 // MongoDB connection
 const mongooseClient = config.get('db.client');
 const redisUrl = config.get('redis.url');
-console.log("redisUrl",redisUrl);
+
 mongoose.connect(mongooseClient);
 
 // Define schema for the second table

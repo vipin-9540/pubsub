@@ -9,4 +9,6 @@ RUN npm install
 
 COPY . .
 
+ENV NODE_ENV=dev
+
 CMD ["pm2-runtime", "index.js"]

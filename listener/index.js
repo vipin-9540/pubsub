@@ -1,11 +1,12 @@
+const config = require('config');
 const mongoose = require('mongoose');
 const { createClient } = require('redis');
 
 // MongoDB connection
-mongoose.connect('mongodb://mongo:27017/pubsub', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+const mongooseClient = config.get('db.client');
+const redisUrl = config.get('redis.url');
+console.log("redisUrl",redisUrl);
+mongoose.connect(mongooseClient);
 
 // Define schema for the second table
 const ListenerSchema = new mongoose.Schema({
@@ -21,7 +22,7 @@ const ListenerSchema = new mongoose.Schema({
 const ListenerModel = mongoose.model('user_log', ListenerSchema);
 
 // Redis Subscriber
-const redisClient = createClient({ url: 'redis://redis:6379' });
+const redisClient = createClient({ url: redisUrl });
 
 (async () => {
   await redisClient.connect();

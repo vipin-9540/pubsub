@@ -23,7 +23,10 @@ mongoose.connect('mongodb://mongo:27017/pubsub');
   
   // Redis Publisher
   const redisClient = createClient({ url: 'redis://redis:6379' });
-  redisClient.connect().then(() => console.log('Redis connected (Receiver)'));
+  redisClient.connect().then(() => console.log('Redis connected (Receiver)'))
+  .catch((error) =>{
+    console.log('redis_error',error);
+  });
   
   // Receiver endpoint
   app.get('/',(req,res)=>{
@@ -44,8 +47,24 @@ mongoose.connect('mongodb://mongo:27017/pubsub');
       };
   
       await User.create(payload);
-      await redisClient.publish('user_new_record', JSON.stringify(payload));
-      res.status(201).json({ message: 'Record received and published.' });
+
+      const value = await redisClient.get('user_new_record');
+      console.log('Value from Redis:', value);
+      await redisClient.publish('user_new_record', JSON.stringify(payload))
+      .then((payload) => {
+        res.status(201).json({ 
+          success: true,
+          message: 'Record is saved successfully!',
+        });
+      })
+      .catch((error) => {
+        res.status(404).json({
+          success: false,
+          message: 'Unable to save record in redis!',
+          errorDetails: {},
+        });
+      });
+     
     });
   
 app.listen(3000, () => {

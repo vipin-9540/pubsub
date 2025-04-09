@@ -1,6 +1,7 @@
 1. Clone the repo
    git clone https://github.com/vipin-9540/pubsub.git
    cd pubsub
+   npm i
 
 2. Start all services
    docker-compose up --build
